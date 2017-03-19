@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+var request = require('request');
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Image Search api' });
@@ -27,13 +29,31 @@ router.get('/api/imagesearch/:term', function (req, res) {
     };
     
     //res.send(JSON.stringify(entry));
+    //`https://api.cognitive.microsoft.com/bing/v5.0/search?q={entry.term}&count=10&offset=${offset}&mkt=en-us&safesearch=Moderate`
+    
+    request({
+        url: 'https://api.cognitive.microsoft.com/bing/v5.0/search',
+        qs: {q: entry.term, count: 10, offset: offset, mkt:'en-us', safesearch: 'Moderate'},
+        method: 'GET',
+        headers: {
+            'Host': 'api.cognitive.microsoft.com',
+            'Ocp-Apim-Subscription-Key': process.env.BINGAPI_KEY
+        }
+    }, function(err, response, body){
+        if(err) {
+            console.log(err);
+        } else {
+            console.log(response.statusCode, body);
+            res.send(body);
+        }
+    });
     
     var collection = db.get('latest');
     collection.insert(entry, function (err, docs) {
         if (err)
             res.send("There was a problem completing your search.");
-        else
-            res.send(docs);
+        //else
+        //    res.send(docs);
     });
 });
 
