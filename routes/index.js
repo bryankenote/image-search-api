@@ -43,8 +43,9 @@ router.get('/api/imagesearch/:term', function (req, res) {
         if(err) {
             console.log(err);
         } else {
-            console.log(response.statusCode, body);
-            res.send(body);
+            //console.log(response.statusCode, body);
+            var results = JSON.parse(body).webPages.value;
+            res.send(JSON.stringify(results));
         }
     });
     
