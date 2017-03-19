@@ -8,8 +8,8 @@ router.get('/', function(req, res, next) {
 
 router.get('/api/latest/imagesearch', function (req, res) {
     var db = req.db;
-    var collection = db.get('recentCollection');
-    collection.find({},{fields:{_id:0}}, function (err, docs) {
+    var collection = db.get('latest');
+    collection.find({},{fields:{_id:0}, sort: {"when": -1}, limit: 10}, function (err, docs) {
         if (err)
             res.send('There was a problem completing your request');
         else
@@ -28,7 +28,7 @@ router.get('/api/imagesearch/:term', function (req, res) {
     
     //res.send(JSON.stringify(entry));
     
-    var collection = db.get('recentCollection');
+    var collection = db.get('latest');
     collection.insert(entry, function (err, docs) {
         if (err)
             res.send("There was a problem completing your search.");
